@@ -2,13 +2,13 @@
 
 namespace Utilities.Commands;
 
-public class UtilsRootCommand : RootCommand
+public sealed class UtilsRootCommand : RootCommand
 {
-    public UtilsRootCommand(IUtilitiesCommands commands)
+    public UtilsRootCommand(IEnumerable<Command> commands)
     {
         Name = "utils";
         Description = "Custom command line utilities.";
 
-        foreach (var command in commands.GetCommands()) AddCommand(command);
+        foreach (var command in commands) AddCommand(command);
     }
 }

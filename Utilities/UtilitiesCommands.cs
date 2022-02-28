@@ -3,7 +3,7 @@ using Utilities.Commands;
 
 namespace Utilities;
 
-public class UtilitiesCommands : IUtilitiesCommands
+public class UtilitiesCommands
 {
     public IEnumerable<Command> GetCommands()
     {

@@ -4,13 +4,13 @@
     {
         public static async Task CopyFileAsync(string sourceFile, string destinationFile, CancellationToken cancellationToken = default)
         {
-            var fileOptions = FileOptions.Asynchronous | FileOptions.SequentialScan;
-            var bufferSize = 65536;
+            const FileOptions fileOptions = FileOptions.Asynchronous | FileOptions.SequentialScan;
+            const int bufferSize = 65536;
 
-            using var sourceStream =
+            await using var sourceStream =
                   new FileStream(sourceFile, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, fileOptions);
 
-            using var destinationStream =
+            await using var destinationStream =
                   new FileStream(destinationFile, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize, fileOptions);
 
             await sourceStream.CopyToAsync(destinationStream, bufferSize, cancellationToken)

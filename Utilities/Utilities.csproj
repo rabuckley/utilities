@@ -27,4 +27,8 @@
   <ItemGroup>
     <Folder Include="Helpers\" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="IUtilitiesCommands.cs" />
+    <Compile Remove="Option.cs" />
+  </ItemGroup>
 </Project>

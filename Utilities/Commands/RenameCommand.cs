@@ -17,7 +17,7 @@ public class RenameCommand : Command
         this.SetHandler((FileInfo[] path, bool glob) => Handler(path, glob), pathArgument, globOption);
     }
 
-    internal new void Handler(FileInfo[] files, bool glob)
+    private new void Handler(FileInfo[] files, bool glob)
     {
         if (glob)
         {
@@ -34,7 +34,7 @@ public class RenameCommand : Command
     }
 
 
-    internal static bool RenameFile(string file)
+    private static bool RenameFile(string file)
     {
         var renamedFile = FormatFilePath(file);
 
@@ -50,7 +50,7 @@ public class RenameCommand : Command
         return true;
     }
 
-    internal static void RenameByGlob(IEnumerable<string> globs)
+    private static void RenameByGlob(IEnumerable<string> globs)
     {
         var matcher = CreateGlobMatcher(globs);
 

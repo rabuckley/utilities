@@ -4,6 +4,7 @@ using System.CommandLine;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utilities;
 using Utilities.Commands;
 using Xunit;
 
@@ -14,8 +15,7 @@ public class UtilsCommandTests
     [Fact]
     public void CanCallRenameCommand()
     {
-        var utils = new UtilsRootCommand();
-        utils.AddCommand(new RenameCommand());
+        var utils = new UtilsRootCommand(new List<Command> {new RenameCommand()});
 
         var actual = utils.Parse("rename *.md --glob");
 
