@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "utils": {
+      "version": "1.0.0",
+      "commands": ["utils"]
+    }
+  }
+}

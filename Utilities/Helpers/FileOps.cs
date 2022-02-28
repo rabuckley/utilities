@@ -1,0 +1,21 @@
+﻿namespace Utilities.Helpers
+{
+    public static class FileOps
+    {
+        public static async Task CopyFileAsync(string sourceFile, string destinationFile, CancellationToken cancellationToken = default)
+        {
+            var fileOptions = FileOptions.Asynchronous | FileOptions.SequentialScan;
+            var bufferSize = 65536;
+
+            using var sourceStream =
+                  new FileStream(sourceFile, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, fileOptions);
+
+            using var destinationStream =
+                  new FileStream(destinationFile, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize, fileOptions);
+
+            await sourceStream.CopyToAsync(destinationStream, bufferSize, cancellationToken)
+                                       .ConfigureAwait(continueOnCapturedContext: false);
+        }
+    }
+}
+
