@@ -1,11 +1,17 @@
 ﻿using System.CommandLine;
 using Utilities.Commands;
 
-var renameCommand = new RenameCommand();
+namespace Utilities;
 
+internal static class Program
+{
+    public static async Task Main(string[] args)
+    {
+        var utilsCli = new UtilsRootCommand()
+        {
+            new RenameCommand()
+        };
 
-var commands = new Command[] { renameCommand.Command };
-
-var utils = new UtilsRootCommand(commands, null, null);
-
-await utils.RootCommand.InvokeAsync(args);
+        await utilsCli.InvokeAsync(args).ConfigureAwait(false);
+    }
+}
