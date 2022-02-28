@@ -52,6 +52,17 @@ public class RenameCommand : Command
 
     internal static void RenameByGlob(IEnumerable<string> globs)
     {
+        var matcher = CreateGlobMatcher(globs);
+
+        var matches = matcher.Execute(new DirectoryInfoWrapper(new DirectoryInfo(Directory.GetCurrentDirectory())));
+
+        var changed = matches.Files.Select(match => RenameFile(match.Path));
+
+        Console.WriteLine(matches.Files.Count() + " files processed. " + changed.Count() + " files renamed.");
+    }
+
+    private static Matcher CreateGlobMatcher(IEnumerable<string> globs)
+    {
         Matcher matcher = new();
 
         globs = globs as List<string> ?? globs.ToList();
@@ -61,14 +72,7 @@ public class RenameCommand : Command
 
         foreach (var glob in exclude) matcher.AddExclude(glob);
         foreach (var glob in include) matcher.AddInclude(glob);
-
-        var matches = matcher.Execute(
-            new DirectoryInfoWrapper(
-                new DirectoryInfo(Directory.GetCurrentDirectory())));
-
-        var changeCount = matches.Files.Select(match => RenameFile(match.Path)).Count(nameChanged => nameChanged);
-
-        Console.WriteLine(matches.Files.Count() + " files processed. " + changeCount + " files renamed.");
+        return matcher;
     }
 
     private static string RemoveAll(string target, string remove, string replace)
