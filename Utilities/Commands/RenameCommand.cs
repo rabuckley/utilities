@@ -47,6 +47,7 @@ public class RenameCommand : Command
         File.Copy(file, renamedFile);
         File.Delete(file);
         Console.WriteLine($"\"{file} -> {renamedFile}\"");
+
         return true;
     }
 
@@ -88,13 +89,9 @@ public class RenameCommand : Command
 
     private static string FormatFilePath(string path)
     {
-        path = new string((from c in path
-                           where
-                               char.IsWhiteSpace(c) ||
-                               char.IsLetterOrDigit(c) ||
-                               c == '.' ||
-                               c == '-'
-                           select char.ToLower(c)).ToArray());
+        if (string.IsNullOrWhiteSpace(path)) throw new ArgumentNullException(nameof(path));
+
+        path = new string((from c in path where char.IsWhiteSpace(c) || char.IsLetterOrDigit(c) || c is '.' or '-' select char.ToLower(c)).ToArray());
 
         // Replace spaces with -
         path = path.Replace(' ', '-');

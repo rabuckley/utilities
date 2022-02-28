@@ -3,9 +3,9 @@ using Utilities.Commands;
 
 namespace Utilities;
 
-public class UtilitiesCommands
+public static class UtilitiesCommands
 {
-    public IEnumerable<Command> GetCommands()
+    public static IEnumerable<Command> GetCommands()
     {
         return new List<Command>()
         {
