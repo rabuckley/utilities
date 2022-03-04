@@ -8,7 +8,6 @@ public sealed class UtilsRootCommand : RootCommand
     {
         Name = "utils";
         Description = "Custom command line utilities.";
-
         foreach (var command in commands) AddCommand(command);
     }
 }

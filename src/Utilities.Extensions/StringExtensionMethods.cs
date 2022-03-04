@@ -1,6 +1,6 @@
-﻿namespace Utilities.Commands;
+﻿namespace Utilities.Extensions;
 
-static class StringExtensionMethods
+public static class StringExtensionMethods
 {
     public static string RemoveAll(this string target, string remove, string replace)
     {

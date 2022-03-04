@@ -25,7 +25,8 @@
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta3.22114.1" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Helpers\" />
+    <ProjectReference Include="..\src\Utilities.Extensions\Utilities.Extensions.csproj" />
+    <ProjectReference Include="..\src\Utilities.IO\Utilities.IO.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="IUtilitiesCommands.cs" />

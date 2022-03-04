@@ -3,13 +3,15 @@ using Utilities.Commands;
 
 namespace Utilities;
 
-public static class UtilitiesCommands
+public static class UtilitiesCli
 {
-    public static IEnumerable<Command> GetCommands()
+    public static RootCommand CreateRootCommand()
     {
-        return new List<Command>()
-        {
-            new RenameCommand()
-        };
+        return new UtilsRootCommand(Commands);
     }
+
+    private static Command[] Commands { get; } =
+    {
+        new("test")
+    };
 }

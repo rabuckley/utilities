@@ -1,6 +1,6 @@
 ﻿namespace Utilities.Helpers
 {
-    public static class FileOps
+    public static class FileHelper
     {
         public static async Task CopyFileAsync(string sourceFile, string destinationFile, CancellationToken cancellationToken = default)
         {
@@ -15,6 +15,12 @@
 
             await sourceStream.CopyToAsync(destinationStream, bufferSize, cancellationToken)
                                        .ConfigureAwait(continueOnCapturedContext: false);
+        }
+
+        public static async Task RenameFileAsync(string sourceFileName, string destFileName)
+        {
+            await CopyFileAsync(sourceFileName, destFileName);
+            File.Delete(sourceFileName);
         }
     }
 }

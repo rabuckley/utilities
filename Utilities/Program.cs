@@ -1,14 +1,5 @@
 ﻿using System.CommandLine;
-using Utilities.Commands;
+using Utilities;
 
-namespace Utilities;
-
-internal static class Program
-{
-    public static async Task Main(string[] args)
-    {
-        var commands = UtilitiesCommands.GetCommands();
-        var cli = new UtilsRootCommand(commands);
-        await cli.InvokeAsync(args).ConfigureAwait(false);
-    }
-}
+var utilitiesCli = UtilitiesCli.CreateRootCommand();
+await utilitiesCli.InvokeAsync(args);
