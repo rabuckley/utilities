@@ -1,15 +1,16 @@
 using System.CommandLine;
+using System.IO;
 using System.Linq;
-using Utilities.Commands;
 using Xunit;
 
-namespace UtilitiesTests;
+namespace UtilitiesTests.CommandTests;
+
 public class RenameCommandTests
 {
     [Fact]
     public void AllParametersAreMatchedWithGlob()
     {
-        var renameCommand = new RenameCommand();
+        var renameCommand = new Utilities.Commands.RenameCommand();
 
         const string glob = "*.md --glob";
 
@@ -22,7 +23,7 @@ public class RenameCommandTests
     [Fact]
     public void AllParametersAreMatchedWithFile()
     {
-        var renameCommand = new RenameCommand();
+        var renameCommand = new Utilities.Commands.RenameCommand();
 
         const string glob = "file.md";
 
@@ -30,5 +31,11 @@ public class RenameCommandTests
 
         Assert.False(actual.UnmatchedTokens.Any());
         Assert.Equal(1, actual.Tokens.Count);
+    }
+
+    private FileInfo CreateFile(string fileName)
+    {
+        File.Create(fileName);
+        return new FileInfo(fileName);
     }
 }

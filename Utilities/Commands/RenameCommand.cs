@@ -1,6 +1,8 @@
 ﻿using System.CommandLine;
-using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
+using Utilities.Extensions;
+using Utilities.Helpers;
+using Utilities.IO;
 
 namespace Utilities.Commands;
 
@@ -8,7 +10,7 @@ public class RenameCommand : Command
 {
     public RenameCommand() : base("rename", "renames a file or glob to a standard format.")
     {
-        var globOption = new Option<bool>(aliases: new[] { "--glob", "-g" }, "Indicate that the passed file string is a glob");
+        var globOption = new Option<bool>(new[] { "--glob", "-g" }, "Indicate that the passed file string is a glob");
         var pathArgument = new Argument<FileInfo[]>("file", "File or glob ");
 
         AddOption(globOption);
@@ -17,7 +19,8 @@ public class RenameCommand : Command
         this.SetHandler((FileInfo[] path, bool glob) => Handler(path, glob), pathArgument, globOption);
     }
 
-    private new void Handler(FileInfo[] files, bool glob)
+
+    private new static async Task Handler(IEnumerable<FileInfo> files, bool glob)
     {
         if (glob)
         {
@@ -30,78 +33,49 @@ public class RenameCommand : Command
 
         if (!existingFiles.Any()) return;
 
-        foreach (var file in existingFiles) RenameFile(file.Name);
+        foreach (var file in existingFiles) await RenameFileAsync(file.Name);
     }
 
 
-    private static bool RenameFile(string file)
+    private static void RenameByGlob(IEnumerable<string> globs)
     {
-        var renamedFile = FormatFilePath(file);
+        var globMatcher = GlobHelper.CreateGlobMatcher(globs);
 
-        if (file == renamedFile)
+        var currentDirectory = new DirectoryInfoWrapper(new DirectoryInfo(Directory.GetCurrentDirectory()));
+
+        var matchingFiles = globMatcher.Execute(currentDirectory);
+
+        var changedFiles = matchingFiles.Files.Select(file => RenameFileAsync(file.Path));
+
+        Console.WriteLine(matchingFiles.Files.Count() + " files processed. " + changedFiles.Count() + " files renamed.");
+    }
+
+
+    private static async Task<bool> RenameFileAsync(string fileName)
+    {
+        var newFileName = FormatFileName(fileName);
+
+        if (fileName == newFileName)
         {
-            Console.WriteLine($"\"{file}\" is already formatted correctly.");
+            Console.WriteLine($"\"{fileName}\" is already formatted correctly.");
             return false;
         }
 
-        File.Copy(file, renamedFile);
-        File.Delete(file);
-        Console.WriteLine($"\"{file} -> {renamedFile}\"");
+        await FileHelper.RenameFileAsync(fileName, newFileName);
+
+        Console.WriteLine($"\"{fileName}\" -> \"{newFileName}\"");
 
         return true;
     }
 
-    private static void RenameByGlob(IEnumerable<string> globs)
+
+    private static string FormatFileName(string path)
     {
-        var matcher = CreateGlobMatcher(globs);
-
-        var matches = matcher.Execute(new DirectoryInfoWrapper(new DirectoryInfo(Directory.GetCurrentDirectory())));
-
-        var changed = matches.Files.Select(match => RenameFile(match.Path));
-
-        Console.WriteLine(matches.Files.Count() + " files processed. " + changed.Count() + " files renamed.");
-    }
-
-    private static Matcher CreateGlobMatcher(IEnumerable<string> globs)
-    {
-        Matcher matcher = new();
-
-        globs = globs as List<string> ?? globs.ToList();
-
-        var exclude = globs.Where(g => g[0] == '!').ToArray();
-        var include = globs.Except(exclude);
-
-        foreach (var glob in exclude) matcher.AddExclude(glob);
-        foreach (var glob in include) matcher.AddInclude(glob);
-        return matcher;
-    }
-
-    private static string RemoveAll(string target, string remove, string replace)
-    {
-        if (!target.Contains(remove))
-            return target;
-
-        while (target.Contains(remove))
-            target = target.Replace(remove, replace);
-
-        return target;
-    }
-
-    private static string FormatFilePath(string path)
-    {
-        if (string.IsNullOrWhiteSpace(path)) throw new ArgumentNullException(nameof(path));
-
-        path = new string((from c in path where char.IsWhiteSpace(c) || char.IsLetterOrDigit(c) || c is '.' or '-' select char.ToLower(c)).ToArray());
-
-        // Replace spaces with -
+        path = new string(path.Where(c => Char.IsWhiteSpace(c) || Char.IsLetterOrDigit(c) || c is '.' or '-').Select(Char.ToLower).ToArray());
+        path = path.Trim();
         path = path.Replace(' ', '-');
-
-        // Remove all double dashes
-        path = RemoveAll(path, "--", "-");
-
-        // Remove all double dots
-        path = RemoveAll(path, "..", ".");
-
+        path = path.RemoveAll("--", "-");
+        path = path.RemoveAll("..", ".");
         return path;
     }
 }
