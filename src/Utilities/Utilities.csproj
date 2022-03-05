@@ -12,8 +12,6 @@
 
   <ItemGroup>
     <None Remove="Microsoft.Extensions.FileSystemGlobbing" />
-    <None Remove="Commands\" />
-    <None Remove="Helpers\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
@@ -25,11 +23,6 @@
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta3.22114.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\Utilities.Extensions\Utilities.Extensions.csproj" />
-    <ProjectReference Include="..\src\Utilities.IO\Utilities.IO.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="IUtilitiesCommands.cs" />
-    <Compile Remove="Option.cs" />
+    <ProjectReference Include="..\Utilities.Commands\Utilities.Commands.csproj" />
   </ItemGroup>
 </Project>
