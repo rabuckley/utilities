@@ -23,7 +23,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Utilities.Commands\Utilities.Commands.csproj" />
     <ProjectReference Include="..\..\src\Utilities\Utilities.csproj" />
-    <ProjectReference Include="..\..\src\Utilities\Utilities.csproj" />
   </ItemGroup>
 
 </Project>

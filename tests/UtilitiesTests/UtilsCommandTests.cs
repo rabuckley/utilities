@@ -14,7 +14,8 @@ public class UtilsCommandTests
         _console = new TestConsole();
     }
 
-    [Fact] public void ParsesRenameCommandWithGlob()
+    [Fact]
+    public void ParsesRenameCommandWithGlob()
     {
         // Arrange
         var utils = UtilitiesCli.CreateApp();
