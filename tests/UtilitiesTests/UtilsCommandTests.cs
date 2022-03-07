@@ -1,5 +1,4 @@
 ﻿using System.CommandLine;
-using System.CommandLine.IO;
 using Utilities;
 using Xunit;
 
@@ -7,35 +6,20 @@ namespace UtilitiesTests;
 
 public class UtilsCommandTests
 {
-    private readonly IConsole _console;
-
-    public UtilsCommandTests()
-    {
-        _console = new TestConsole();
-    }
-
-    [Fact]
-    public void ParsesRenameCommandWithGlob()
+    [Theory]
+    [InlineData("rename", 1)]
+    [InlineData("rename -h", 2)]
+    [InlineData("rename file.ext", 2)]
+    public void Parse_ShouldHaveNTokens_WhenNTokensArePassed(string command, int expectedTokenCount)
     {
         // Arrange
         var utils = UtilitiesCli.CreateApp();
 
         // Act
-        var actual = utils.Parse("rename *.md --glob");
+        var actual = utils.Parse(command);
 
         // Assert
-        Assert.Equal(3, actual.Tokens.Count);
-        Assert.Equal(0, actual.UnmatchedTokens.Count);
-    }
-
-    [Fact]
-    public void ParsesRenameCommandWithFile()
-    {
-        var utils = UtilitiesCli.CreateApp();
-
-        var actual = utils.Parse("rename file.md");
-
-        Assert.Equal(2, actual.Tokens.Count);
-        Assert.Equal(0, actual.UnmatchedTokens.Count);
+        Assert.Empty(actual.UnmatchedTokens);
+        Assert.Equal(expectedTokenCount, actual.Tokens.Count);
     }
 }

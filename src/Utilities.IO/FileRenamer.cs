@@ -1,27 +1,32 @@
-﻿namespace Utilities.Helpers
+﻿using System.IO.Abstractions;
+
+namespace Utilities.IO;
+
+public class FileRenamer : IFileRenamer
 {
-    public static class FileHelper
+    private readonly IFileSystem _fileSystem;
+    public FileRenamer(IFileSystem fileSystem)
     {
-        public static async Task CopyFileAsync(string sourceFile, string destinationFile, CancellationToken cancellationToken = default)
-        {
-            const FileOptions fileOptions = FileOptions.Asynchronous | FileOptions.SequentialScan;
-            const int bufferSize = 65536;
+        _fileSystem = fileSystem;
+    }
+    public async Task RenameFileAsync(string sourceFileName, string destFileName)
+    {
+        await CopyFileAsync(sourceFileName, destFileName);
+        _fileSystem.File.Delete(sourceFileName);
 
-            await using var sourceStream =
-                  new FileStream(sourceFile, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, fileOptions);
+    }
+    private async Task CopyFileAsync(string sourceFile, string destinationFile, CancellationToken cancellationToken = default)
+    {
+        const FileOptions fileOptions = FileOptions.Asynchronous | FileOptions.SequentialScan;
+        const int bufferSize = 65536;
 
-            await using var destinationStream =
-                  new FileStream(destinationFile, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize, fileOptions);
+        await using var sourceStream =
+            _fileSystem.FileStream.Create(sourceFile, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, fileOptions);
 
-            await sourceStream.CopyToAsync(destinationStream, bufferSize, cancellationToken)
-                                       .ConfigureAwait(continueOnCapturedContext: false);
-        }
+        await using var destinationStream =
+            _fileSystem.FileStream.Create(destinationFile, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize, fileOptions);
 
-        public static async Task RenameFileAsync(string sourceFileName, string destFileName)
-        {
-            await CopyFileAsync(sourceFileName, destFileName);
-            File.Delete(sourceFileName);
-        }
+        await sourceStream.CopyToAsync(destinationStream, bufferSize, cancellationToken)
+            .ConfigureAwait(continueOnCapturedContext: false);
     }
 }
-

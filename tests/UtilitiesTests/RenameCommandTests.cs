@@ -1,8 +1,9 @@
-using System;
+using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.IO;
 using System.IO;
-using System.Linq;
+using System.IO.Abstractions.TestingHelpers;
+using System.Threading.Tasks;
 using Utilities.Commands;
 using Xunit;
 
@@ -10,32 +11,54 @@ namespace UtilitiesTests;
 
 public class RenameCommandTests
 {
-    private readonly IConsole _console;
+    private readonly RenameCommand _sut;
+    private readonly IConsole _console = new TestConsole();
+    private readonly MockFileSystem _fileSystem;
 
     public RenameCommandTests()
     {
-        _console = new TestConsole();
+        _fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
+        _sut = new RenameCommand(_console, _fileSystem);
+    }
+
+
+    [Theory]
+    [InlineData("file.md", 1)]
+    [InlineData("*.md", 1)]
+    [InlineData("file.md file-2.md", 2)]
+    public void Parse_ShouldMatchNTokens_WhenOneNTokensArePassed(string command, int expectedTokens)
+    {
+        // Act
+        var actual = _sut.Parse(command);
+
+        // Assert
+        Assert.Empty(actual.UnmatchedTokens);
+        Assert.Equal(expectedTokens, actual.Tokens.Count);
     }
 
     [Fact]
-    public void AllParametersAreMatchedWithGlob()
+    public async Task Handler_ShouldFail_WhenGivenNonExistentFile()
     {
-        var renameCommand = new RenameCommand();
-
-        var actual = renameCommand.Parse("*.md --glob");
-
-        Assert.False(actual.UnmatchedTokens.Any());
-        Assert.Equal(2, actual.Tokens.Count);
+        var exitCode = await _sut.InvokeAsync("fileDoesNotExist.md");
+        Assert.Equal(1, exitCode);
     }
 
-    [Fact]
-    public void AllParametersAreMatchedWithFile()
+    [Theory]
+    [InlineData("file test.md", "file-test.md")]
+    [InlineData("file      test.md", "file-test.md")]
+    [InlineData("    file   .   test.md", "file-test.md")]
+    [InlineData("file    .....  test.md", "file-test.md")]
+
+    public async Task Handler_ShouldRenameFile_WhenFileExists(string fileName, string expectedName)
     {
-        var renameCommand = new RenameCommand();
+        // Arrange
+        _fileSystem.File.Create(fileName);
+        var files = new[] { new FileInfo(fileName) };
 
-        var actual = renameCommand.Parse("file.md");
+        // Act
+        await _sut.Handler(files);
 
-        Assert.False(actual.UnmatchedTokens.Any());
-        Assert.Equal(1, actual.Tokens.Count);
+        // Assert
+        Assert.True(_fileSystem.FileExists(expectedName));
     }
 }

@@ -46,12 +46,15 @@ public class RenameCommand : Command
 
         if (fileName == newFileName)
         {
-            _console.Out.Write($"\"{fileName}\" is already formatted correctly.");
+            WriteSuccess();
+            _console.Out.WriteLine($"\"{fileName}\" is already formatted correctly.");
             return;
         }
 
         await _fileRenamer.RenameFileAsync(fileName, newFileName);
-        _console.Out.Write($"\"{fileName}\" -> \"{newFileName}\"");
+
+        WriteSuccess();
+        _console.Out.WriteLine($"\"{fileName}\" -> \"{newFileName}\"");
     }
 
 
@@ -65,5 +68,12 @@ public class RenameCommand : Command
         path = path.ReplaceAllDotsWithDashExceptFinal();
         path = path.ReplaceAll("--", "-");
         return path;
+    }
+
+    private void WriteSuccess()
+    {
+        Console.ForegroundColor = ConsoleColor.DarkGreen;
+        Console.Write("[Success] ");
+        Console.ForegroundColor = ConsoleColor.White;
     }
 }
