@@ -1,5 +1,8 @@
 ﻿using System.CommandLine;
-using Utilities;
+using System.CommandLine.IO;
+using System.IO.Abstractions;
+using Utilities.Commands;
 
-var utilitiesCli = UtilitiesCli.CreateApp();
+var utilitiesCli = new UtilsRootCommand(new SystemConsole(), new FileSystem());
+
 await utilitiesCli.InvokeAsync(args);

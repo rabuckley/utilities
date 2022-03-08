@@ -12,18 +12,15 @@ public class RenameCommand : Command
     private readonly IFileRenamer _fileRenamer;
     private readonly IFileSystem _fileSystem;
 
-    public RenameCommand() : this(new SystemConsole(), new FileSystem())
-    {
-    }
-
     public RenameCommand(
         IConsole console,
-        IFileSystem fileSystem) :
+        IFileSystem fileSystem,
+        IFileRenamer fileRenamer) :
         base("rename", "renames a file or glob to a standard format.")
     {
         _console = console;
         _fileSystem = fileSystem;
-        _fileRenamer = new FileRenamer(_fileSystem);
+        _fileRenamer = fileRenamer;
 
         Argument pathArgument = new Argument<FileInfo[]>("file", "One or more files");
         AddArgument(pathArgument);

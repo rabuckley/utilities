@@ -1,5 +1,5 @@
 ﻿using System.CommandLine;
-using Utilities;
+using Utilities.Commands;
 using Xunit;
 
 namespace UtilitiesTests;
@@ -13,7 +13,7 @@ public class UtilsCommandTests
     public void Parse_ShouldHaveNTokens_WhenNTokensArePassed(string command, int expectedTokenCount)
     {
         // Arrange
-        var utils = UtilitiesCli.CreateApp();
+        var utils = new UtilsRootCommand();
 
         // Act
         var actual = utils.Parse(command);

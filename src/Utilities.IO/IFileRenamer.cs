@@ -1,7 +1,6 @@
-namespace Utilities.IO
+namespace Utilities.IO;
+
+public interface IFileRenamer
 {
-    public interface IFileRenamer
-    {
-        Task RenameFileAsync(string fileName, string newFileName);
-    }
+    Task RenameFileAsync(string fileName, string newFileName);
 }

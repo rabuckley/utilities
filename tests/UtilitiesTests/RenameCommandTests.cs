@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Abstractions.TestingHelpers;
 using System.Threading.Tasks;
 using Utilities.Commands;
+using Utilities.IO;
 using Xunit;
 
 namespace UtilitiesTests;
@@ -14,13 +15,11 @@ public class RenameCommandTests
     private readonly RenameCommand _sut;
     private readonly IConsole _console = new TestConsole();
     private readonly MockFileSystem _fileSystem;
-
     public RenameCommandTests()
     {
         _fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
-        _sut = new RenameCommand(_console, _fileSystem);
+        _sut = new RenameCommand(_console, _fileSystem, new FileRenamer(_fileSystem));
     }
-
 
     [Theory]
     [InlineData("file.md", 1)]
