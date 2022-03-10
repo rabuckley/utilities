@@ -4,6 +4,8 @@ using System.CommandLine.IO;
 using System.IO;
 using System.IO.Abstractions.TestingHelpers;
 using System.Threading.Tasks;
+using FluentAssertions;
+using Utilities.CLI;
 using Utilities.Commands;
 using Utilities.IO;
 using Xunit;
@@ -31,15 +33,16 @@ public class RenameCommandTests
         var actual = _sut.Parse(command);
 
         // Assert
-        Assert.Empty(actual.UnmatchedTokens);
-        Assert.Equal(expectedTokens, actual.Tokens.Count);
+        actual.UnmatchedTokens.Should().BeEmpty();
+        actual.Tokens.Count.Should().Be(expectedTokens);
     }
 
     [Fact]
     public async Task Handler_ShouldFail_WhenGivenNonExistentFile()
     {
-        var exitCode = await _sut.InvokeAsync("fileDoesNotExist.md");
-        Assert.Equal(1, exitCode);
+        var actualResult = await _sut.InvokeAsync("fileDoesNotExist.md");
+
+        actualResult.Should().Be(InvokeResult.Failure);
     }
 
     [Theory]
@@ -52,12 +55,12 @@ public class RenameCommandTests
     {
         // Arrange
         _fileSystem.File.Create(fileName);
-        var files = new[] { new FileInfo(fileName) };
+        var files = new FileInfo[] { new(fileName) };
 
         // Act
         await _sut.Handler(files);
 
         // Assert
-        Assert.True(_fileSystem.FileExists(expectedName));
+        _fileSystem.FileExists(expectedName).Should().BeTrue();
     }
 }

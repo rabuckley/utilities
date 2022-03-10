@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Utilities\Utilities.csproj" />
+    <ProjectReference Include="..\..\Utilities.CLI\Utilities.CLI.csproj" />
   </ItemGroup>
 
 </Project>
