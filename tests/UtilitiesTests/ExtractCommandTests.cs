@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Abstractions.TestingHelpers;
 using FluentAssertions;
 using Utilities.Commands;
+using Utilities.Commands.Extract;
 using Xunit;
 
 namespace UtilitiesTests;
@@ -64,10 +65,10 @@ public class ExtractCommandTests
         fileSystem.AddFile($"/sub1/sub2/sub3/{fileNames[4]}", new MockFileData(""));
 
 
-        var sut = new ExtractCommand(_console, fileSystem);
+        var sut = new ExtractCommandHandler(fileSystem, _console);
 
         // Act
-        sut.Handler(new DirectoryInfo("/"));
+        sut.Execute(new DirectoryInfo("/"));
 
         // Assert
         foreach (var file in fileNames)

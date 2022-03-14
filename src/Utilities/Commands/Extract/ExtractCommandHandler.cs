@@ -2,24 +2,20 @@ using System.CommandLine;
 using System.CommandLine.IO;
 using System.IO.Abstractions;
 
-namespace Utilities.Commands;
+namespace Utilities.Commands.Extract;
 
-public class ExtractCommand : Command
+public class ExtractCommandHandler
 {
     private readonly IFileSystem _fileSystem;
     private readonly IConsole _console;
-    public ExtractCommand(IConsole console, IFileSystem fileSystem) : base("extract", "gets all children of the target directory and moves all child files to that directory")
+
+    public ExtractCommandHandler(IFileSystem fileSystem, IConsole console)
     {
-        _console = console;
         _fileSystem = fileSystem;
-
-        Argument directoryArgument = new Argument<DirectoryInfo>("directory", "the target directory");
-        AddArgument(directoryArgument);
-
-        this.SetHandler((DirectoryInfo dir) => Handler(dir), directoryArgument);
+        _console = console;
     }
 
-    public new Task Handler(DirectoryInfo directory)
+    public Task Execute(DirectoryInfo directory)
     {
         var targetDirectory = _fileSystem.DirectoryInfo.FromDirectoryName(directory.FullName);
         var childFiles = GetAllChildFiles(targetDirectory);
