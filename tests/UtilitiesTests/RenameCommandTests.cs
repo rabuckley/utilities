@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Utilities.CLI;
 using Utilities.Commands;
+using Utilities.Commands.Rename;
 using Utilities.IO;
 using Xunit;
 
@@ -14,13 +15,17 @@ namespace UtilitiesTests;
 
 public class RenameCommandTests
 {
-    private readonly RenameCommand _sut;
+    private readonly RenameCommand _renameCommand;
+    private readonly RenameCommandHandler _handler;
     private readonly IConsole _console = new TestConsole();
     private readonly MockFileSystem _fileSystem;
+    private readonly FileRenamer _fileRenamer;
     public RenameCommandTests()
     {
         _fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
-        _sut = new RenameCommand(_console, _fileSystem, new FileRenamer(_fileSystem));
+        _fileRenamer = new FileRenamer(_fileSystem);
+        _handler = new RenameCommandHandler(_console, _fileRenamer, _fileSystem);
+        _renameCommand = new RenameCommand(_console, _fileSystem, _fileRenamer);
     }
 
     [Theory]
@@ -30,7 +35,7 @@ public class RenameCommandTests
     public void Parse_ShouldMatchNTokens_WhenOneNTokensArePassed(string command, int expectedTokens)
     {
         // Act
-        var actual = _sut.Parse(command);
+        var actual = _renameCommand.Parse(command);
 
         // Assert
         actual.UnmatchedTokens.Should().BeEmpty();
@@ -40,7 +45,7 @@ public class RenameCommandTests
     [Fact]
     public async Task Handler_ShouldFail_WhenGivenNonExistentFile()
     {
-        var actualResult = await _sut.InvokeAsync("fileDoesNotExist.md");
+        var actualResult = await _renameCommand.InvokeAsync("fileDoesNotExist.md");
 
         actualResult.Should().Be(InvokeResult.Failure);
     }
@@ -58,7 +63,7 @@ public class RenameCommandTests
         var files = new FileInfo[] { new(fileName) };
 
         // Act
-        await _sut.Handler(files);
+        await _handler.ExecuteAsync(files);
 
         // Assert
         _fileSystem.FileExists(expectedName).Should().BeTrue();

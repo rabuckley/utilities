@@ -30,10 +30,10 @@ public class ExtractCommandTests
         fileSystem.AddFile("/sub1/file2.txt", new MockFileData(""));
         fileSystem.AddFile("/sub2/file3.txt", new MockFileData(""));
 
-        var sut = new ExtractCommand(_console, fileSystem);
+        var sut = new ExtractCommandHandler(fileSystem, _console);
 
         // Act
-        sut.Handler(new DirectoryInfo("/"));
+        sut.Execute(new DirectoryInfo("/"));
 
         // Assert
         fileSystem.Directory.Exists("/sub1").Should().BeFalse();
