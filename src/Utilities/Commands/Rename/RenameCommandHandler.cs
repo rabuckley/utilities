@@ -18,7 +18,6 @@ namespace Utilities.Commands.Rename
             _console = console;
             _fileSystem = fileSystem;
             _fileRenamer = fileRenamer;
-
         }
 
         public async Task ExecuteAsync(IEnumerable<FileInfo> files)

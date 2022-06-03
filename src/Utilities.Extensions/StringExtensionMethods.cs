@@ -7,7 +7,9 @@ public static class StringExtensionMethods
         if (!target.Contains(remove)) return target;
 
         while (target.Contains(remove))
+        {
             target = target.Replace(remove, replace);
+        }
 
         return target;
     }
@@ -21,11 +23,7 @@ public static class StringExtensionMethods
         return body + extension;
     }
 
-    /// <summary>
-    ///
-    /// </summary>
-    /// <param name="path"></param>
-    /// <returns>(body, extension)</returns>
+
     public static (string, string) SeparateBodyAndExtensionFromPath(this string path)
     {
         var extensionDotIndex = path.LastIndexOf('.');
@@ -33,14 +31,14 @@ public static class StringExtensionMethods
 
         List<char> pathBody = new();
 
-        for (int i = 0; i < extensionDotIndex; i++)
+        for (var i = 0; i < extensionDotIndex; i++)
         {
             pathBody.Add(pathArray[i]);
         }
 
         List<char> pathExtension = new();
 
-        for (int i = extensionDotIndex; i < pathArray.Length; i++)
+        for (var i = extensionDotIndex; i < pathArray.Length; i++)
         {
             pathExtension.Add(pathArray[i]);
         }
@@ -49,6 +47,5 @@ public static class StringExtensionMethods
         var extension = new string(pathExtension.ToArray());
 
         return (body, extension);
-
     }
 }

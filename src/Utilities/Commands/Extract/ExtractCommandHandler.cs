@@ -35,8 +35,6 @@ public class ExtractCommandHandler
 
         foreach (var file in childFiles)
         {
-            if (file is null) throw new ArgumentNullException();
-
             var thisFile = _fileSystem.FileInfo.FromFileName(file);
             var dest = _fileSystem.Path.Join(directory.FullName, thisFile.Name);
 
@@ -56,11 +54,11 @@ public class ExtractCommandHandler
         var immediateSubDirectories = _fileSystem.Directory.GetDirectories(directory.FullName);
         var childFiles = new List<string>();
 
-        Parallel.ForEach(immediateSubDirectories, subDirectory =>
+        foreach (var subDirectory in immediateSubDirectories)
         {
             var files = _fileSystem.Directory.GetFiles(subDirectory, "*", SearchOption.AllDirectories);
             childFiles.AddRange(files.Where(f => f is not null));
-        });
+        }
 
         return childFiles;
     }

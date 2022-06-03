@@ -19,13 +19,13 @@ public class RenameCommandTests
     private readonly RenameCommandHandler _handler;
     private readonly IConsole _console = new TestConsole();
     private readonly MockFileSystem _fileSystem;
-    private readonly FileRenamer _fileRenamer;
+
     public RenameCommandTests()
     {
         _fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>());
-        _fileRenamer = new FileRenamer(_fileSystem);
-        _handler = new RenameCommandHandler(_console, _fileRenamer, _fileSystem);
-        _renameCommand = new RenameCommand(_console, _fileSystem, _fileRenamer);
+        var fileRenamer = new FileRenamer(_fileSystem);
+        _handler = new RenameCommandHandler(_console, fileRenamer, _fileSystem);
+        _renameCommand = new RenameCommand(_console, _fileSystem, fileRenamer);
     }
 
     [Theory]
@@ -55,12 +55,11 @@ public class RenameCommandTests
     [InlineData("file      test.md", "file-test.md")]
     [InlineData("    file   .   test.md", "file-test.md")]
     [InlineData("file    .....  test.md", "file-test.md")]
-
     public async Task Handler_ShouldRenameFile_WhenFileExists(string fileName, string expectedName)
     {
         // Arrange
         _fileSystem.File.Create(fileName);
-        var files = new FileInfo[] { new(fileName) };
+        var files = new FileInfo[] {new(fileName)};
 
         // Act
         await _handler.ExecuteAsync(files);

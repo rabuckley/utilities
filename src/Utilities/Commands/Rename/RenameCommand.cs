@@ -1,12 +1,8 @@
 ﻿using System.CommandLine;
-using System.CommandLine.IO;
 using System.IO.Abstractions;
-using Humanizer;
-using Utilities.Commands.Rename;
-using Utilities.Extensions;
 using Utilities.IO;
 
-namespace Utilities.Commands;
+namespace Utilities.Commands.Rename;
 
 public class RenameCommand : Command
 {
@@ -16,7 +12,8 @@ public class RenameCommand : Command
         IFileRenamer fileRenamer) :
         base("rename", "renames a file or glob to a standard format.")
     {
-        Argument pathArgument = new Argument<FileInfo[]>("file", "One or more files");
+        var pathArgument = new Argument<FileInfo[]>("file", "One or more files");
+
         AddArgument(pathArgument);
 
         var handler = new RenameCommandHandler(console, fileRenamer, fileSystem);

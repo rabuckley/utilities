@@ -14,7 +14,6 @@ public class UnitTest1
 
         Assert.Equal(expectedBody, actualBody);
         Assert.Equal(expectedExtension, actualExtension);
-
     }
 
     [Theory]
@@ -27,6 +26,4 @@ public class UnitTest1
         var actual = path.ReplaceAllDotsWithDashExceptFinal();
         Assert.Equal(expected, actual);
     }
-
-
 }

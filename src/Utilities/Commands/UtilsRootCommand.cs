@@ -1,18 +1,16 @@
 ﻿using System.CommandLine;
-using System.CommandLine.IO;
 using System.IO.Abstractions;
 using Utilities.Commands.Extract;
+using Utilities.Commands.Rename;
 using Utilities.IO;
 
 namespace Utilities.Commands;
 
 public sealed class UtilsRootCommand : RootCommand
 {
-    public override string Name => "utils";
-    public override string Description => "Custom command line utilities.";
-    public UtilsRootCommand() : this(new SystemConsole(), new FileSystem())
-    {
-    }
+    public override string Name { get; set; } = "utils";
+    public override string? Description { get; set; } = "Custom command line utilities.";
+
     public UtilsRootCommand(IConsole console, IFileSystem fileSystem)
     {
         AddCommand(new RenameCommand(console, fileSystem, new FileRenamer(fileSystem)));
