@@ -1,6 +1,7 @@
 ﻿using System.CommandLine;
 using System.IO.Abstractions;
 using Utilities.Commands.Extract;
+using Utilities.Commands.Flash;
 using Utilities.Commands.Rename;
 using Utilities.IO;
 
@@ -13,7 +14,8 @@ public sealed class UtilsRootCommand : RootCommand
 
     public UtilsRootCommand(IConsole console, IFileSystem fileSystem)
     {
-        AddCommand(new RenameCommand(console, fileSystem, new FileRenamer(fileSystem)));
-        AddCommand(new ExtractCommand(console, fileSystem));
+        Add(new RenameCommand(console, fileSystem, new FileRenamer(fileSystem)));
+        Add(new ExtractCommand(console, fileSystem));
+        Add(new FlashCommand(console, fileSystem));
     }
 }
