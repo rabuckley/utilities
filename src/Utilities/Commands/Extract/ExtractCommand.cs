@@ -10,7 +10,7 @@ public class ExtractCommand : Command
     {
         var directoryArgument = new Argument<DirectoryInfo>("directory", "the target directory");
 
-        AddArgument(directoryArgument);
+        Add(directoryArgument);
 
         var handler = new ExtractCommandHandler(fileSystem, console);
 

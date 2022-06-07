@@ -14,7 +14,7 @@ public class RenameCommand : Command
     {
         var pathArgument = new Argument<FileInfo[]>("file", "One or more files");
 
-        AddArgument(pathArgument);
+        Add(pathArgument);
 
         var handler = new RenameCommandHandler(console, fileRenamer, fileSystem);
 
