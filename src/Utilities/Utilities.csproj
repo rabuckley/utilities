@@ -19,7 +19,7 @@
     <PackageReference Include="Microsoft.Alm.Authentication" Version="4.3.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0-preview.7.22375.6" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0-preview.7.22375.6" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0-preview.7.22375.6" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0-rc.1.22426.10" />
     <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="7.0.0-preview.7.22375.6" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0-preview.7.22375.6" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0-preview.7.22375.6" />
