@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Utilities.ExtensionsTests;
 
-public class UnitTest1
+public class StringExtensionMethodTests
 {
     [Theory]
     [InlineData("readme.md", "readme", ".md")]

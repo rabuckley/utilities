@@ -1,10 +1,7 @@
-using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.IO;
-using System.IO;
 using System.IO.Abstractions.TestingHelpers;
 using FluentAssertions;
-using Utilities.Commands;
 using Utilities.Commands.Extract;
 using Xunit;
 
