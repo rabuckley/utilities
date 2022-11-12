@@ -3,6 +3,7 @@ using System.IO.Abstractions;
 using Utilities.Commands.Extract;
 using Utilities.Commands.Flash;
 using Utilities.Commands.GitUpdate;
+using Utilities.Commands.HtmlToMarkdown;
 using Utilities.Commands.Rename;
 using Utilities.IO;
 
@@ -19,5 +20,6 @@ public sealed class UtilsRootCommand : RootCommand
         Add(new ExtractCommand(console, fileSystem));
         Add(new FlashCommand(console, fileSystem));
         Add(new GitUpdateCommand(console, fileSystem));
+        Add(new HtmlToMarkdownCommand(console, fileSystem));
     }
 }
