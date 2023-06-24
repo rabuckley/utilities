@@ -17,7 +17,7 @@ public class ExtractCommandHandler
 
     public Task Execute(DirectoryInfo directory)
     {
-        var targetDirectory = _fileSystem.DirectoryInfo.FromDirectoryName(directory.FullName);
+        var targetDirectory = _fileSystem.DirectoryInfo.New(directory.FullName);
         var childFiles = GetAllChildFiles(targetDirectory);
 
         MoveAllFiles(targetDirectory, childFiles);
@@ -35,7 +35,7 @@ public class ExtractCommandHandler
 
         foreach (var file in childFiles)
         {
-            var thisFile = _fileSystem.FileInfo.FromFileName(file);
+            var thisFile = _fileSystem.FileInfo.New(file);
             var dest = _fileSystem.Path.Join(directory.FullName, thisFile.Name);
 
             if (_fileSystem.File.Exists(dest))
@@ -57,7 +57,7 @@ public class ExtractCommandHandler
         foreach (var subDirectory in immediateSubDirectories)
         {
             var files = _fileSystem.Directory.GetFiles(subDirectory, "*", SearchOption.AllDirectories);
-            childFiles.AddRange(files.Where(f => f is not null));
+            childFiles.AddRange(files);
         }
 
         return childFiles;

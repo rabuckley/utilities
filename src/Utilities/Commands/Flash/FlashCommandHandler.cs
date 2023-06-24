@@ -28,7 +28,7 @@ public class FlashCommandHandler
 
         var directoryNames = _fileSystem.Directory.GetDirectories(directory.FullName, "*", SearchOption.AllDirectories);
 
-        var directories = directoryNames.Select(n => _fileSystem.DirectoryInfo.FromDirectoryName(n)).ToList();
+        var directories = directoryNames.Select(n => _fileSystem.DirectoryInfo.New(n)).ToList();
 
         directories.Add(directory);
 

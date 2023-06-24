@@ -24,11 +24,11 @@ public class FileRenamer : IFileRenamer
         const int bufferSize = 65536;
 
         await using var sourceStream =
-            _fileSystem.FileStream.Create(sourceFile, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize,
+            _fileSystem.FileStream.New(sourceFile, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize,
                 fileOptions);
 
         await using var destinationStream =
-            _fileSystem.FileStream.Create(destinationFile, FileMode.Create, FileAccess.Write, FileShare.None,
+            _fileSystem.FileStream.New(destinationFile, FileMode.Create, FileAccess.Write, FileShare.None,
                 bufferSize, fileOptions);
 
         await sourceStream.CopyToAsync(destinationStream, bufferSize, cancellationToken)

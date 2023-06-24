@@ -20,7 +20,7 @@ namespace Utilities.Commands.HtmlToMarkdown
 
             _htmlOptions = new HtmlIn();
 
-            _markdownOptions = new CommonMarkOut()
+            _markdownOptions = new CommonMarkOut
             {
                 Wrap = Wrap.None
             };
@@ -29,7 +29,7 @@ namespace Utilities.Commands.HtmlToMarkdown
         public async Task HandleAsync(IFileInfo file, CancellationToken cancellationToken)
         {
             await using var htmlInStream = file.OpenRead();
-            var markdownFile = _fileSystem.FileInfo.FromFileName(_fileSystem.Path.ChangeExtension(file.FullName, ".md"));
+            var markdownFile = _fileSystem.FileInfo.New(_fileSystem.Path.ChangeExtension(file.FullName, ".md"));
             await using var markdownOutStream = markdownFile.OpenWrite();
             _console.WriteLine($"{file.Name} => {markdownFile.Name}");
             await _engine.Convert(htmlInStream, markdownOutStream, _htmlOptions, _markdownOptions, null, cancellationToken);

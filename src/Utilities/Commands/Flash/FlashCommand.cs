@@ -21,7 +21,7 @@ namespace Utilities.Commands.Flash
 
             this.SetHandler(async (dir, fileName) =>
             {
-                var directory = fileSystem.DirectoryInfo.FromDirectoryName(dir.FullName);
+                var directory = fileSystem.DirectoryInfo.New(dir.FullName);
                 await handler.ExecuteAsync(directory, fileName);
             }, directoryArg, fileNameOpt);
         }

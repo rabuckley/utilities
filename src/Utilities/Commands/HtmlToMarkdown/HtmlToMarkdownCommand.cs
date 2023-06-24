@@ -40,11 +40,11 @@ namespace Utilities.Commands.HtmlToMarkdown
 
                 if (file is not null)
                 {
-                    await handler.HandleAsync(fileSystem.FileInfo.FromFileName(file.FullName), cancellationToken);
+                    await handler.HandleAsync(fileSystem.FileInfo.New(file.FullName), cancellationToken);
                 }
                 else
                 {
-                    await handler.HandleAsync(fileSystem.DirectoryInfo.FromDirectoryName(dir!.FullName), cancellationToken);
+                    await handler.HandleAsync(fileSystem.DirectoryInfo.New(dir!.FullName), cancellationToken);
                 }
             });
         }

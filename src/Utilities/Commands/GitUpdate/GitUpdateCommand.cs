@@ -12,10 +12,11 @@ namespace Utilities.Commands.GitUpdate
 
             AddArgument(pathArgument);
 
-            this.SetHandler(async directory =>
-            { var handler = new GitUpdateCommandHandler(console);
-              await handler.ExecuteAsync(fileSystem.DirectoryInfo.FromDirectoryName(directory.FullName)); },
-            pathArgument);
+            this.SetHandler(directory =>
+            { 
+                var handler = new GitUpdateCommandHandler(console);
+                handler.Execute(fileSystem.DirectoryInfo.New(directory.FullName)); 
+            }, pathArgument);
         }
     }
 }

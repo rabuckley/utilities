@@ -14,18 +14,19 @@ namespace Utilities.Commands.GitUpdate
             _console = console;
         }
 
-        public async Task ExecuteAsync(IDirectoryInfo root)
+        public void Execute(IDirectoryInfo root)
         {
             var allDirectories = root.GetDirectories("*", SearchOption.AllDirectories);
 
-            var gitDirectories = (allDirectories.Where(directory => directory.Name == ".git")
-                .Select(directory => directory.Parent)).ToList();
+            var gitDirectories = allDirectories
+                .Where(directory => directory.Name == ".git")
+                .Select(directory => directory.Parent).ToList();
 
             var credentials = GetCredentials();
 
-            var pullOptions = new PullOptions()
+            var pullOptions = new PullOptions
             {
-                FetchOptions = new FetchOptions()
+                FetchOptions = new FetchOptions
                 {
                     CredentialsProvider = (url, user, cred) => new UsernamePasswordCredentials
                     {
@@ -33,7 +34,7 @@ namespace Utilities.Commands.GitUpdate
                         Password = credentials.Password
                     },
                 },
-                MergeOptions = new MergeOptions()
+                MergeOptions = new MergeOptions
                 {
                     FastForwardStrategy = FastForwardStrategy.Default,
                     FileConflictStrategy = CheckoutFileConflictStrategy.Theirs,
@@ -42,29 +43,42 @@ namespace Utilities.Commands.GitUpdate
 
             var identity = new Identity(credentials.Username, credentials.Username);
 
+            var tasks = new List<Task>();
+
             foreach (var gitDirectory in gitDirectories)
             {
-                _console.WriteLine($"Updating {gitDirectory.FullName}");
-                var repository = new Repository(gitDirectory.FullName);
+                if (gitDirectory is null)
+                {
+                    throw new InvalidOperationException("The parent directory of a .git directory was out of scope.");
+                }
 
-                try
+                _console.WriteLine($"Updating '{gitDirectory.Name}'");
+                
+                var task = Task.Run(() =>
                 {
-                    LibGit2Sharp.Commands.Checkout(repository, repository.Head);
-                    LibGit2Sharp.Commands.Pull(repository, new Signature(identity, DateTimeOffset.Now), pullOptions);
-                }
-                catch (LibGit2SharpException e)
-                {
-                    _console.WriteLine($"Error: {e.Message}");
-                }
+                    var repository = new Repository(gitDirectory.FullName);
+
+                    try
+                    {
+                        LibGit2Sharp.Commands.Checkout(repository, repository.Head);
+                        LibGit2Sharp.Commands.Pull(repository, new Signature(identity, DateTimeOffset.Now), pullOptions);
+                    }
+                    catch (LibGit2SharpException e)
+                    {
+                        _console.WriteLine($"[{gitDirectory.Name}] Error: '{e.Message}'");
+                    }
+                });
+                
+                tasks.Add(task);
             }
+            
+            Task.WaitAll(tasks.ToArray());
         }
 
         private static Credential GetCredentials()
         {
-            var secrets = new SecretStore("git");
-            var authentication = new BasicAuthentication(secrets);
-            var credentials = authentication.GetCredentials(new TargetUri("https://github.com"));
-            return credentials;
+            var authentication = new BasicAuthentication(new SecretStore("git"));
+            return authentication.GetCredentials(new TargetUri("https://github.com"));
         }
     }
 }
