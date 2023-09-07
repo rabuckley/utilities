@@ -12,10 +12,13 @@ public class GitUpdateCommand : Command
 
         AddArgument(pathArgument);
 
-        this.SetHandler(async directory =>
+        this.SetHandler(async context =>
         {
+            var directory = context.ParseResult.GetValueForArgument(pathArgument);
+            var cancellationToken = context.GetCancellationToken();
+
             var handler = new GitUpdateCommandHandler(console);
-            await handler.ExecuteAsync(fileSystem.DirectoryInfo.New(directory.FullName));
-        }, pathArgument);
+            await handler.ExecuteAsync(fileSystem.DirectoryInfo.New(directory.FullName), cancellationToken);
+        });
     }
 }
