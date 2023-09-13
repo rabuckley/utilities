@@ -1,64 +1,60 @@
 ﻿using System.Collections.Concurrent;
 using System.CommandLine;
 using System.Diagnostics;
-using System.IO.Abstractions;
-using CommunityToolkit.Diagnostics;
 
 namespace Utilities.Commands.GitUpdate;
 
 public class GitUpdateCommandHandler
 {
-    private readonly IConsole _console;
+    private const string GitDir = ".git";
 
-    public GitUpdateCommandHandler(IConsole console)
+    public async Task ExecuteAsync(DirectoryInfo root, CancellationToken cancellationToken = default)
     {
-        _console = console;
-    }
+        ConcurrentBag<DirectoryInfo> gitDirectories = new();
 
-    public async Task ExecuteAsync(IDirectoryInfo root, CancellationToken cancellationToken = default)
-    {
-        var allDirectories = root.GetDirectories("*", SearchOption.AllDirectories);
-
-        ConcurrentBag<IDirectoryInfo> gitDirectories = new();
-
-        Parallel.ForEach(allDirectories, directory =>
+        Parallel.ForEach(root.EnumerateDirectories(), directory =>
         {
-            if (directory.Name != ".git")
+            if (!Directory.Exists(Path.Join(directory.FullName, GitDir)))
             {
                 return;
             }
 
-            if (directory.Parent is null)
-            {
-                ThrowHelper.ThrowInvalidOperationException(
-                    "The parent directory of a .git directory was out of scope.");
-            }
-
-            gitDirectories.Add(directory.Parent!);
+            gitDirectories.Add(directory);
         });
 
-        _console.WriteLine($"Found {gitDirectories.Count} git repositories.");
+        Console.WriteLine($"Found {gitDirectories.Count} git repositories.");
+
+        var writeLock = new SemaphoreSlim(1, 1);
 
         await Parallel.ForEachAsync(gitDirectories, cancellationToken, async (gitDirectory, token) =>
         {
             var output = await PullRepositoryAsync(gitDirectory, token);
 
-            foreach (var line in output)
+            await writeLock.WaitAsync(token);
+
+            try
             {
-                _console.WriteLine(line);
+                foreach (var line in output)
+                {
+                    Console.WriteLine(line);
+                }
+            }
+            finally
+            {
+                writeLock.Release();
             }
         });
     }
 
     private static async Task<List<string>> PullRepositoryAsync(
-        IDirectoryInfo dir,
+        DirectoryInfo dir,
         CancellationToken cancellationToken = default)
     {
         var output = new List<string> { $"Updating '{dir.Name}'" };
 
         try
         {
-            var p = Process.Start(new ProcessStartInfo
+            var gitPull = new ProcessStartInfo
             {
                 FileName = "git",
                 Arguments = "pull",
@@ -66,7 +62,9 @@ public class GitUpdateCommandHandler
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
-            });
+            };
+
+            using var p = Process.Start(gitPull);
 
             if (p is null)
             {

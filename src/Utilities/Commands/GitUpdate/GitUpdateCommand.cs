@@ -17,8 +17,8 @@ public class GitUpdateCommand : Command
             var directory = context.ParseResult.GetValueForArgument(pathArgument);
             var cancellationToken = context.GetCancellationToken();
 
-            var handler = new GitUpdateCommandHandler(console);
-            await handler.ExecuteAsync(fileSystem.DirectoryInfo.New(directory.FullName), cancellationToken);
+            var handler = new GitUpdateCommandHandler();
+            await handler.ExecuteAsync(directory, cancellationToken);
         });
     }
 }
